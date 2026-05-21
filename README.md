@@ -107,3 +107,8 @@ pmsm-temperature-prediction/
 ├── src/
 │   ├── components/
 │   └── pipeline/
+
+## Live Demo
+
+Streamlit App:
+https://pmsm-temperature-prediction-6tfz6xweynuwvg2mz2tmaw.streamlit.app/
