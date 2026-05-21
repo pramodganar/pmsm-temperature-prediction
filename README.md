@@ -121,6 +121,7 @@ pmsm-temperature-prediction/
 ├── src/
 │   ├── components/
 │   └── pipeline/
+```
 
 ## Live Demo
 
