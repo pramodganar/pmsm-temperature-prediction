@@ -73,7 +73,21 @@ The following regression models were trained and evaluated:
 
 ## Best Model
 
-Random Forest Regressor achieved the best performance for PMSM temperature prediction.
+CatBoost Regressor achieved the best performance for PMSM temperature prediction.
+
+### Final Model Performance
+
+| Metric | Value |
+|---|---|
+| MAE | 3.27 |
+| RMSE | 4.66 |
+| R² Score | 0.946 |
+
+CatBoost was selected because it provided:
+- highest prediction accuracy
+- better generalization
+- smaller deployment size
+- faster inference performance
 
 ### Evaluation Metrics
 - R² Score
