@@ -1,0 +1,25 @@
+# Data
+data/raw/
+data/processed/
+
+# Models (keep the trained artifact so the repo runs on clone)
+models/*
+!models/model.joblib
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
