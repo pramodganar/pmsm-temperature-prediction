@@ -29,20 +29,25 @@ motor speed, coolant temperature, and ambient temperature.
 
 ## Data
 
+- Source: the `electric_motor_temperature` table of a provided SQLite database
+  (`Regression.db`), exported to CSV for this pipeline. The same underlying
+  measurements are published publicly as the Kaggle
+  [Electric Motor Temperature](https://www.kaggle.com/datasets/wkirgsn/electric-motor-temperature)
+  dataset.
 - One row per timestep; each `profile_id` is a separate measurement session.
 - Target: `pm`. Features: `u_q`, `u_d`, `i_d`, `i_q`, `motor_speed`, `coolant`,
   `ambient`. `profile_id` is a grouping key, not a feature.
-- ~1.05M rows over 54 sessions. The file has 2^20 lines (1,048,575 data rows plus
-  a header), Excel's row limit, while the source is described as larger, so it is
-  most likely truncated.
+- The source table holds ~1.33M records; the extract used here is capped at 2^20
+  lines (1,048,575 data rows plus a header), Excel's row limit, so it is a
+  truncated slice — ~1.05M rows over 54 sessions.
 - About 6.4% of rows have a missing value, in two linked blocks
   (`u_d`+`motor_speed`, and `i_q`+`profile_id`).
 
-The full raw dataset (~100 MB) is not tracked in git. Download it from Kaggle
-([Electric Motor Temperature](https://www.kaggle.com/datasets/wkirgsn/electric-motor-temperature))
-and place `electric_motor_temperature.csv` at `data/raw/` before retraining. A
-small `data/sample/` extract is included so the prediction script and app work
-out of the box, and the trained model is committed under `models/`, so cloning is
+The full raw dataset (~100 MB) is not tracked in git. Recreate
+`data/raw/electric_motor_temperature.csv` from the source table (or the Kaggle
+dataset above) before retraining. A small `data/sample/` extract is included so
+the prediction script and app work out of the box, and the trained model is
+committed under `models/`, so cloning is
 enough to run predictions without the full data or a training run.
 
 ## Approach
