@@ -4,6 +4,8 @@ Regression project to predict the permanent magnet tooth temperature (`pm`) of a
 permanent magnet synchronous motor (PMSM) from electrical and thermal sensor
 readings recorded across many driving cycles.
 
+**Live demo:** https://pmsm-temperature-prediction-dmtwdmtp9stfq6kyg84vh8.streamlit.app/
+
 ## Highlights
 
 - **Test RMSE 10.8 °C, R² 0.67** on motor runs the model never saw, against a
@@ -145,7 +147,8 @@ Score the included sample with the committed model (no training needed):
 python predict.py --input data/sample/records.csv --output predictions.csv
 ```
 
-Or use the interactive app for single and batch predictions:
+Or use the interactive app for single and batch predictions (also
+[hosted here](https://pmsm-temperature-prediction-dmtwdmtp9stfq6kyg84vh8.streamlit.app/)):
 
 ```bash
 streamlit run app.py
