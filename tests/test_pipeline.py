@@ -26,8 +26,8 @@ def make_frame(n_groups=10, per_group=60, seed=0):
 def test_split_groups_are_disjoint():
     df = make_frame()
     X_train, X_test, _, _, _ = split_by_profile(df, test_size=0.3)
-    train_g = set(df.iloc[X_train.index][GROUP_COL])
-    test_g = set(df.iloc[X_test.index][GROUP_COL])
+    train_g = set(df.loc[X_train.index, GROUP_COL])
+    test_g = set(df.loc[X_test.index, GROUP_COL])
     assert train_g and test_g
     assert train_g.isdisjoint(test_g)
 

@@ -14,7 +14,13 @@ from .features import make_preprocessor
 
 def candidate_models():
     """The shortlist, each as a self-contained pipeline. Linear models get
-    scaling; the tree ensembles don't need it."""
+    scaling; the tree ensembles don't need it.
+
+    Ridge and Lasso are reference points, not contenders, so their alphas are
+    left near default: with 7 well-conditioned features and ~840k rows there is
+    nothing for regularisation to fix, and at alpha=0.001 the Lasso is
+    effectively unpenalised OLS — which is why both score identically to the
+    linear baseline in 04_model_comparison."""
     return {
         "ridge": Pipeline([
             ("pre", make_preprocessor(scale=True)),

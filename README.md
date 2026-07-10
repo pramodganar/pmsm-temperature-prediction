@@ -6,20 +6,6 @@ readings recorded across many driving cycles.
 
 **Live demo:** https://pmsm-temperature-prediction-dmtwdmtp9stfq6kyg84vh8.streamlit.app/
 
-## Highlights
-
-- **Test RMSE 10.8 °C, R² 0.67** on motor runs the model never saw, against a
-  mean-predictor floor of ~19.6 °C.
-- **The validation, not the model, is the hard part.** The data is dense
-  time-series sessions; a random split leaks and inflates scores. The split holds
-  out whole sessions, and that choice flips the model ranking, a random forest
-  that looks perfect on training generalises worse than linear regression.
-- **One shared pipeline** drives training, batch scoring, the app and the JSON
-  API, so preprocessing can't drift between them; missing values are handled
-  in-pipeline.
-- Reproducible (pinned deps, fixed seeds), tested (`pytest`), and shipped with a
-  trained model and a sample dataset so it runs straight after cloning.
-
 ## Problem
 
 The magnet temperature cannot be measured reliably in a deployed motor, but it
@@ -37,18 +23,26 @@ motor speed, coolant temperature, and ambient temperature.
 - One row per timestep; each `profile_id` is a separate measurement session.
 - Target: `pm`. Features: `u_q`, `u_d`, `i_d`, `i_q`, `motor_speed`, `coolant`,
   `ambient`. `profile_id` is a grouping key, not a feature.
-- The source table holds ~1.33M records; the extract used here is capped at 2^20
-  lines (1,048,575 data rows plus a header), Excel's row limit, so it is a
-  truncated slice — ~1.05M rows over 54 sessions.
+- The source table holds ~1.33M records; the extract used here is capped at
+  2^20 lines (Excel's row limit), giving 1,048,575 rows over 54 sessions.
 - About 6.4% of rows have a missing value, in two linked blocks
   (`u_d`+`motor_speed`, and `i_q`+`profile_id`).
 
-The full raw dataset (~100 MB) is not tracked in git. Recreate
-`data/raw/electric_motor_temperature.csv` from the source table (or the Kaggle
-dataset above) before retraining. A small `data/sample/` extract is included so
-the prediction script and app work out of the box, and the trained model is
-committed under `models/`, so cloning is
-enough to run predictions without the full data or a training run.
+The full raw dataset (~100 MB) is not tracked in git. To retrain, recreate
+`data/raw/electric_motor_temperature.csv` from the source database:
+
+```bash
+python scripts/export_raw.py --db path/to/Regression.db
+```
+
+The reported numbers are reproducible only from that provided extract. The
+public Kaggle copy is the same measurement campaign but a different release:
+~1.33M rows, extra columns (stator temperatures, torque), and none of the
+missing-value blocks described above, so a model retrained from it will score
+differently. A small `data/sample/` extract is included so the prediction
+script and app work out of the box, and the trained model is committed under
+`models/`, so cloning is enough to run predictions without the full data or a
+training run.
 
 ## Approach
 
@@ -87,6 +81,11 @@ perfectly but generalises worse than linear regression to unseen sessions.
 
 ## Results
 
+Test RMSE 10.8 °C and R² 0.67 on motor runs the model never saw, against a
+mean-predictor floor of ~19.6 °C. The grouped split is what makes these numbers
+honest, and it flips the model ranking: a random forest that looks perfect on
+training generalises worse than linear regression.
+
 Selected model: tuned histogram gradient boosting
 (`learning_rate=0.05`, `max_iter=200`). Metrics on the held-out sessions:
 
@@ -124,6 +123,7 @@ No single sensor dominates, the estimate is genuinely multivariate.
 ```
 data/          sample extract (raw and processed are gitignored)
 notebooks/     exploration, numbered by stage
+scripts/       raw-data export from the provided SQLite database
 src/           reusable modules (data prep, features, model, evaluation)
 models/        trained model artifact
 reports/       figures
@@ -135,6 +135,8 @@ api.py         flask json endpoint (POST /predict), same pipeline
 ```
 
 ## How to run
+
+Requires Python 3.11.
 
 ```bash
 python -m venv .venv
